@@ -1,0 +1,3 @@
+graft controlpanel/templates
+graft controlpanel/static
+include controlpanel/schema.sql

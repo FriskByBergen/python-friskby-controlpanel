@@ -1,3 +1,4 @@
-graft friskby_controlpanel/templates
-graft friskby_controlpanel/static
+recursive-include friskby_controlpanel/templates *
+recursive-include friskby_controlpanel/static *
 include friskby_controlpanel/schema.sql
+include README.md

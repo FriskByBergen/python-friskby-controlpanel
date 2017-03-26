@@ -9,11 +9,11 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='friskby-controlpanel',
-    version='0.1',
+    version='0.2',
     description='Friskby device control panel',
     long_description=long_description,
-    url='https://github.com/FriskByBergen/python-frisby-controlpanel',
-    author='Frisk By Bergen',
+    url='https://github.com/FriskByBergen/python-friskby-controlpanel',
+    author='FriskBy Bergen',
     author_email='jonas@drange.net',
     license='GNU General Public License, Version 3',
     classifiers=[
@@ -25,7 +25,7 @@ setup(
     ],
     keywords='friskby bergen frisk by rpiparticle a-small-code',
     packages=find_packages(exclude=['tests']),
-    install_requires=['friskby', 'flask'],
+    install_requires=['friskby', 'flask', 'pyxdg'],
     extras_require={
         'test': ['coverage'],
     },

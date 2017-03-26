@@ -7,6 +7,8 @@
     (c) 2017 FriskbyBergen.
     (c) 2015 by Armin Ronacher.
 
+    Licence
+    =======
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -22,20 +24,17 @@
 """
 import os
 import sqlite3
-import requests
-import tempfile
-import json
-from friskby import DeviceConfig
-from urlparse import urlparse
-from flask import (Flask, request, redirect, g, url_for, abort, render_template, flash,)
+from friskby_interface import FriskbyInterface
+from flask import (Flask, request, redirect, g, url_for, render_template)
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'controlpanel.db'),
+    DATABASE=os.path.join(app.root_path, 'data.db'),
     FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
-    FRISKBY_SENSOR_PATH='/sensor/api/device'
+    FRISKBY_SENSOR_PATH='/sensor/api/device',
+    FRISKBY_INTERFACE=FriskbyInterface()
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
 
@@ -92,11 +91,11 @@ def dashboard():
             config_url = root_url + "%s/%s/" % (sensor_path, device_id)
             print("Fetching config for device %s from: %s" % (device_id,
                                                               config_url))
-
             try:
-                config = DeviceConfig.download(config_url)
-                config.save(filename=os.path.join("/usr/local/friskby",
-                                                  "etc/config.json"))
+                app.config['FRISKBY_INTERFACE'].download_and_save_config(
+                    config_url,
+                    os.path.join("/usr/local/friskby", "etc/config.json")
+                )
                 return redirect(url_for('registered'))
             except Exception as e:
                 error = "Failed to download configuration: %s" % e

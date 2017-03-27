@@ -5,13 +5,55 @@
     <meta charset="utf-8">
     <title>Friskby Controlpanel</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pure-base-min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pure-forms-min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pure-buttons-min.css') }}">
+
+    <style type="text/css">
+</style>
 </head>
 
 <body>
     <header>
-        <div class="logo"><img src="{{ url_for('static', filename='img/friskby-logo.png') }}"></div>
+        <div class="header-meat">
+            <div class="logo">
+                <a href="{{ url_for('dashboard') }}">
+                    <img src="{{ url_for('static', filename='img/friskby-logo.png') }}">
+                </a>
+            </div>
+        </div>
+
+        <div class="status-area">
+
+            <p class="device-id">
+            Device:
+            {% if device_id %}
+                <b>{{ device_id }}</b>
+            {% else %}
+                Not registered
+            {% endif %}
+            </p>
+
+            <ul class="statuses">
+                <li class="{% if sampler_status != 'active' %}not-{% endif %}ok">
+                    <a href="{{ url_for('status', service_name='sampler')}}">
+                        Sampler <span>{{ sampler_status }}</span>
+                    </a>
+                </li>
+                <li class="{% if submitter_status != 'active' %}not-{% endif %}ok">
+                    Submitter <span>{{ submitter_status }}</span>
+                </li>
+                <li class="{% if friskby_status != 'active' %}not-{% endif %}ok">
+                    Updater <span>{{ friskby_status }}</span>
+                </li>
+            </ul>
+
+            <div class="connection-status connected"></div>
+        </div>
+
     </header>
-    {% block body %}{% endblock %}
+
+    <div class="panel">{% block body %}{% endblock %}</div>
     <script src="js/scripts.js"></script>
 </body>
 </html>

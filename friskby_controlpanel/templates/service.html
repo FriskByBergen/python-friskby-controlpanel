@@ -1,0 +1,16 @@
+
+{% extends "base.html" %}
+{% block body %}
+
+{% if error %}
+    <p class="error">{{ error }}</p>
+{% else %}
+    <p>{{ name }} is in the <b>{{ status }}</b> status.</p>
+
+    <pre>
+{{ journal }}
+    </pre>
+{% endif %}
+
+
+{% endblock %}

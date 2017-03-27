@@ -1,7 +1,161 @@
-.logo {
-    max-width: 150px;
+@font-face {
+    /* https://github.com/VanillaandCream/Palanquin (OFL) */
+    font-family: 'Palanquin-Medium';
+    src: url('../fonts/Palanquin-Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
+
+@font-face {
+    /* https://github.com/VanillaandCream/Palanquin (OFL) */
+    font-family: 'Palanquin-SemiBold';
+    src: url('../fonts/Palanquin-SemiBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    /* https://github.com/VanillaandCream/Palanquin (OFL) */
+    font-family: 'Palanquin-Regular';
+    src: url('../fonts/Palanquin-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    /* https://github.com/VanillaandCream/Palanquin (OFL) */
+    font-family: 'Palanquin-ExtraLight';
+    src: url('../fonts/Palanquin-ExtraLight.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+body {
+    font-family: "Palanquin-Regular", sans-serif;
+    background: #f3f3f3;
+}
+
+header {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0 20px;
+    background: #fff;
+}
+
+.header-meat {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.logo {
+    max-width: 50px;
+    display: inline-block;
+
+}
+
 .logo img {
     display: block;
     width: 100%;
+    vertical-align: middle
+}
+
+.connection-status {
+    position: absolute;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    top: 48px;
+    background-size: 100%;
+}
+
+.connection-status.connected {
+    background-image: url("../img/connected.svg");
+}
+
+.connection-status.not-connected {
+    background-image: url("../img/transfer-error.svg");
+}
+
+.status-area {
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.device-id {
+    font-family: 'Palanquin-ExtraLight', sans-serif;
+    font-size: 9pt;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.statuses {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
+
+.statuses li {
+    display: inline-block;
+    font-size: 10pt;
+    margin-right: 20px;
+    position: relative;
+    padding: 0 10px 0 25px;
+    font-size: 10pt;
+    line-height: 1.3;
+    font-family: 'Palanquin-ExtraLight', sans-serif;
+    text-transform: uppercase;
+}
+
+.statuses li a {
+    color: #666;
+    text-decoration: none;
+}
+
+.statuses li a:hover {
+    color: #666;
+    text-decoration: underline;
+}
+
+.statuses li:before {
+    border-radius: 100px;
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    content: " ";
+}
+
+.statuses span {
+    display: block;
+    font-family: 'Palanquin-Regular', sans-serif;
+    font-size: 7pt;
+}
+
+.ok:before {
+    background: #69C63C;
+}
+
+.not-ok:before {
+    background: #ccc;
+}
+
+.panel {
+    border-radius: 10px;
+    max-width: 720px;
+    margin: -10px auto 30px auto;
+    padding: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px #ddd;
+    z-index: 1;
+    position: relative;
+    background: white;
+}
+
+/* Device registration form. */
+
+.device-id-group {
+    margin: 10px 0;
 }

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+
+<form class="pure-form pure-form-stacked" action="{{ url_for('register') }}" method="post">
+    <fieldset>
+        <legend>Register your device</legend>
+
+        <div class="pure-control-group device-id-group">
+            <label for="deviceid">Device ID</label>
+            <input id="deviceid" type="text" name="deviceid" required>
+            <span class="pure-form-message">This ID has to be provided by a Friskby administrator.</span>
+        </div>
+
+        <button type="submit" class="pure-button pure-button-primary">Register</button>
+    </fieldset>
+</form>
+
+{% endblock %}

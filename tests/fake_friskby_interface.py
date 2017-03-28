@@ -26,7 +26,22 @@ class FakeFriskbyInterface():
 
     def __init__(self):
         self.fails = False
+        self.device_id = None
+
+        self.sampler_status = None
+        self.sampler_journal = None
 
     def download_and_save_config(self, url, filename):
         if self.fails:
             raise ValueError("Was asked to fail.")
+
+    def get_device_id(self, filename):
+        return self.device_id
+
+    def get_service_status(self, service):
+        if service == 'sampler':
+            return self.sampler_status
+
+    def get_service_journal(self, service):
+        if service == 'sampler':
+            return self.sampler_journal

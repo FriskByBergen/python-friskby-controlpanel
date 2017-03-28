@@ -25,9 +25,11 @@ setup(
     ],
     keywords='friskby bergen frisk by rpiparticle a-small-code',
     packages=find_packages(exclude=['tests']),
+    provides=['friskby_controlpanel'],
     include_package_data=True,
-    install_requires=['friskby', 'flask', 'dbus-python'],
-    extras_require={
-        'test': ['coverage'],
-    },
+
+    # Note that we require that dbus-python is installed on the system, but if
+    # we require it here, this package becomes architecture dependent.
+    install_requires=['friskby', 'flask'],
+    test_suite='tests',
 )

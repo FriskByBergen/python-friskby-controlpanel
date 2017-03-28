@@ -23,33 +23,18 @@ from fake_friskby_interface import FakeFriskbyInterface
 import unittest
 
 
-class StatusTestCase(unittest.TestCase):
+class DashboardTestCase(unittest.TestCase):
 
     def setUp(self):
         self.iface = FakeFriskbyInterface()
         cp.app.config['TESTING'] = True
         cp.app.config['FRISKBY_INTERFACE'] = self.iface
-
-        # Set device so that the dashboard does not redirect.
-        self.iface.device_id = 'mydevice'
-
         self.app = cp.app.test_client()
 
-    def test_that_header_reflects_sampler_status(self):
-        self.iface.sampler_status = 'active'
+    def test_when_registered_device(self):
+        self.iface.device_id = 'mydevice'
         out = self.app.get('/')
-        self.assertIn("Sampler <span>active</span>", out.data)
-
-        self.iface.sampler_status = 'dead'
-        out = self.app.get('/')
-        self.assertIn("Sampler <span>dead</span>", out.data)
-
-    def test_service_page(self):
-        self.iface.sampler_status = 'superactive'
-        self.iface.sampler_journal = 'this is the sampler journal'
-        out = self.app.get('/service/sampler')
-        self.assertIn(self.iface.sampler_status, out.data)
-        self.assertIn(self.iface.sampler_journal, out.data)
+        self.assertIn("mydevice", out.data)
 
 
 if __name__ == '__main__':

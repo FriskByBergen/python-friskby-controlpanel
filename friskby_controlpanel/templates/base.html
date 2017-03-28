@@ -37,18 +37,20 @@
             <ul class="statuses">
                 <li class="{% if sampler_status != 'active' %}not-{% endif %}ok">
                     <a href="{{ url_for('status', service_name='sampler')}}">
-                        Sampler <span>{{ sampler_status }}</span>
+                        Sampler <span>{{ sampler_status or "N/A" }}</span>
                     </a>
                 </li>
                 <li class="{% if submitter_status != 'active' %}not-{% endif %}ok">
-                    Submitter <span>{{ submitter_status }}</span>
+                    <a href="{{ url_for('status', service_name='submitter')}}">
+                        Submitter <span>{{ submitter_status or "N/A" }}</span>
+                    </a>
                 </li>
                 <li class="{% if friskby_status != 'active' %}not-{% endif %}ok">
-                    Updater <span>{{ friskby_status }}</span>
+                    <a href="{{ url_for('status', service_name='friskby')}}">
+                        Friskby <span>{{ friskby_status or "N/A" }}</span>
+                    </a>
                 </li>
             </ul>
-
-            <div class="connection-status connected"></div>
         </div>
 
     </header>

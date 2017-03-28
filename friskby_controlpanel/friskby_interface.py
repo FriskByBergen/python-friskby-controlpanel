@@ -20,32 +20,29 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import dbus
+
+try:
+    import dbus
+except ImportError:
+    raise ImportError('Please install python-dbus.')
+
 import subprocess
+import sys
 from friskby import DeviceConfig
 
+SYSTEMD_NAME = 'org.freedesktop.systemd1'
+SYSTEMD_OBJ = '/org/freedesktop/systemd1'
 SYSTEMD_UNIT_IFACE = 'org.freedesktop.systemd1.Unit'
 SYSTEMD_MANAGER_IFACE = 'org.freedesktop.systemd1.Manager'
 DBUS_PROPERTIES_IFACE = 'org.freedesktop.DBus.Properties'
 
 
-# See https://wiki.freedesktop.org/www/Software/systemd/dbus/ for how this was
-# defined.
-class ActiveState():
-    ACTIVE = 1
-    RELOADING = 2
-    INACTIVE = 3
-    FAILED = 4
-    ACTIVATING = 5
-    DEACTIVATING = 6
-
-
+# Represents a systemd DBus proxy as needed by the control panel.
 class SystemdDBus():
 
     def __init__(self):
         self.sysbus = dbus.SystemBus()
-        systemd1 = self.sysbus.get_object('org.freedesktop.systemd1',
-                                          '/org/freedesktop/systemd1')
+        systemd1 = self.sysbus.get_object(SYSTEMD_NAME, SYSTEMD_OBJ)
         self.manager = dbus.Interface(systemd1, SYSTEMD_MANAGER_IFACE)
 
     def get_unit_status(self, unit):
@@ -63,25 +60,33 @@ class SystemdDBus():
         return None
 
 
+# Glues DBus, python-friskby and other pertinent things together so as to
+# hide implementation details from the control panel.
 class FriskbyInterface():
 
     def __init__(self):
         self.systemd = SystemdDBus()
 
     def _service_to_unit(self, service):
-        """Returns a unit or None if the service wasn't pertinent."""
+        """Returns a unit or None if the service wasn't pertinent to the
+        friskby system."""
         known_units = {
             'friskby': 'friskby.service',
-            'sampler': 'rsyslog.service',
+            'sampler': 'friskby-sampler.service',
             'submitter': 'friskby-submitter.service',
         }
         return known_units.get(service, None)
 
     def download_and_save_config(self, url, filename):
+        """Downloads config from url and saves it to the given filename."""
         config = DeviceConfig.download(url)
         config.save(filename=filename)
 
     def get_service_status(self, service):
+        """Returns the unit status as defined by [1]. Only services pertinent
+        to the friskby system will be considered.
+        [1] https://www.freedesktop.org/wiki/Software/systemd/dbus/
+        """
         unit = self._service_to_unit(service)
 
         if service is None:
@@ -94,6 +99,9 @@ class FriskbyInterface():
             return None
 
     def get_service_journal(self, service):
+        """Returns the full output from journalctl where unit is the given
+        service. Only services pertinent to the friskby system will be
+        considered."""
         unit = self._service_to_unit(service)
 
         if service is None:
@@ -111,12 +119,15 @@ class FriskbyInterface():
                 "--no-pager"
             ])
         except subprocess.CalledProcessError as e:
-            print(e)
+            """This means we got a non-zero exit code from journalctl. We can
+            do naught but log."""
+            print("Failed to capture journalctl output for %s:"
+                  " %s exited with %d.\nOutput:%s" % (e.cmd,
+                                                      int(e.returncode),
+                                                      e.output))
+            sys.stdout.flush()
 
         return content
-
-    def are_we_polling_yet(self):
-        pass
 
     def get_device_id(self, filename):
         """Returns the device id, or None."""

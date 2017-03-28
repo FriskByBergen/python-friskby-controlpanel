@@ -40,6 +40,7 @@ app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
 
 @app.context_processor
 def inject_device_id():
+    """Injects the device_id into the template context, or None if none."""
     filename = app.config['FRISKBY_DEVICE_CONFIG_PATH']
     try:
         device_id = app.config['FRISKBY_INTERFACE'].get_device_id(filename)
@@ -50,24 +51,23 @@ def inject_device_id():
 
 @app.context_processor
 def inject_statuses():
+    """Injects the friskby system service statuses into the template context.
+    """
     fby_iface = app.config['FRISKBY_INTERFACE']
     sampler_status = fby_iface.get_service_status('sampler')
+    submitter_status = fby_iface.get_service_status('submitter')
+    friskby_status = fby_iface.get_service_status('friskby')
     return {
         'sampler_status': sampler_status,
-        'submitter_status': 'n/a',
-        'friskby_status': 'n/a'
+        'submitter_status': submitter_status,
+        'friskby_status': friskby_status
     }
 
 
-# @app.teardown_appcontext
-# def close_db(error):
-#     """Closes the database again at the end of the request."""
-#     if hasattr(g, 'sqlite_db'):
-#         g.sqlite_db.close()
-
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def dashboard():
+    """Renders the dashboard. Will redirect to device registration if no
+    device_id was found."""
     fby_iface = app.config['FRISKBY_INTERFACE']
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
 
@@ -76,11 +76,28 @@ def dashboard():
     except IOError:
         device_id = None
 
-    register_device = device_id is None
+    # No device, so redirect to the register page.
+    if not device_id:
+        return redirect(url_for('register'))
 
+    return render_template('dashboard.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Renders a page whereon you can register a device."""
+    fby_iface = app.config['FRISKBY_INTERFACE']
+    config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
     error = None
 
-    if request.method == 'POST' and register_device:
+    try:
+        device_id = fby_iface.get_device_id(config_path)
+    except IOError:
+        device_id = None
+
+    if request.method == 'POST' and device_id:
+        return redirect(url_for('dashboard'))
+    elif request.method == 'POST' and not device_id:
         if request.form['deviceid'] == "":
             error = 'No device id'
         else:
@@ -90,27 +107,28 @@ def dashboard():
             config_url = root_url + "%s/%s/" % (sensor_path, device_id)
             print("Fetching config for device %s from: %s" % (device_id,
                                                               config_url))
+            sys.stdout.flush()
             try:
                 fby_iface.download_and_save_config(config_url, config_path)
                 return redirect(url_for('registered'))
+            # TODO: Catch more specific exception(s).
             except Exception as e:
                 error = "Failed to download configuration: %s" % e
                 print(error)
-                register_device = True
+                sys.stdout.flush()
 
-    sys.stdout.flush()
-    return render_template('dashboard.html',
-                           error=error,
-                           register_device=register_device)
+    return render_template('register.html', error=error)
 
 
 @app.route('/registered')
 def registered():
+    """Renders a “your device is registered template”."""
     return render_template('registered.html')
 
 
 @app.route('/service/<string:service_name>')
 def status(service_name):
+    """Renders a service given a service_name."""
     iface = app.config['FRISKBY_INTERFACE']
     error = None
     service_status = None
@@ -119,9 +137,10 @@ def status(service_name):
     try:
         service_status = iface.get_service_status(service_name)
         service_journal = iface.get_service_journal(service_name)
-    except ValueError as e:
-        print(e)
+    except ValueError:
         error = 'No such service: %s.' % service_name
+        print(error)
+        sys.stdout.flush()
 
     return render_template(
         'service.html',

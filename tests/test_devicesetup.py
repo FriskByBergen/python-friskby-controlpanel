@@ -31,32 +31,32 @@ class DeviceSetupTestCase(unittest.TestCase):
         self.app = cp.app.test_client()
 
     def test_the_dash_unregistered_device(self):
-        out = self.app.get('/')
-        assert b'Not registered' in out.data
+        out = self.app.get('/', follow_redirects=True)
+        self.assertIn('Not registered', out.data)
 
     def test_trying_to_register_nulldevice(self):
-        out = self.app.post('/', data=dict({
+        out = self.app.post('/register', data=dict({
             "deviceid": ""
-        }), follow_redirects=True)
-        assert b'No device id' in out.data
+        }))
+        self.assertIn('No device id', out.data)
 
     def test_successful_registering_of_device(self):
-        out = self.app.post('/', data=dict({
+        out = self.app.post('/register', data=dict({
             "deviceid": "my-device-id"
         }), follow_redirects=True)
-        assert b'Device now registered' in out.data
+        self.assertIn('Device now registered', out.data)
 
     def test_registering_a_device_but_it_fails_miserably(self):
         cp.app.config['FRISKBY_INTERFACE'].fails = True
-        out = self.app.post('/', data=dict({
+        out = self.app.post('/register', data=dict({
             "deviceid": "my-device-id"
         }), follow_redirects=True)
-        assert b'Error' in out.data
+        self.assertIn('Error', out.data)
 
     def test_device_registered(self):
         cp.app.config['FRISKBY_INTERFACE'].device_id = 'mydevice'
-        out = self.app.post('/')
-        assert b'mydevice' in out.data
+        out = self.app.get('/')
+        self.assertIn('mydevice', out.data)
 
 
 if __name__ == '__main__':

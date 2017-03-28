@@ -5,11 +5,16 @@
 {% if error %}
     <p class="error">{{ error }}</p>
 {% else %}
-    <p>{{ name }} is in the <b>{{ status }}</b> status.</p>
+    <p>{{ name }} is in the <b>{{ status or "N/A" }}</b> status.</p>
 
-    <pre>
+    {% if not status %}
+        <p class="pure-form-message">This might mean that the service is not enabled or installed on your system.</p>
+    {% endif %}
+
+    <pre class="journal-content">
 {{ journal }}
     </pre>
+    <p class="journal-info">Systemd journal for {{ name }}.</p>
 {% endif %}
 
 

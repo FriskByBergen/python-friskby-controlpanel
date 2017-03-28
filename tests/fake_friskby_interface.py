@@ -39,9 +39,9 @@ class FakeFriskbyInterface():
         return self.device_id
 
     def get_service_status(self, service):
-        if service is 'sampler':
+        if service == 'sampler':
             return self.sampler_status
 
     def get_service_journal(self, service):
-        if service is 'sampler':
+        if service == 'sampler':
             return self.sampler_journal

@@ -59,23 +59,6 @@ header {
     vertical-align: middle
 }
 
-.connection-status {
-    position: absolute;
-    right: 0;
-    width: 28px;
-    height: 28px;
-    top: 48px;
-    background-size: 100%;
-}
-
-.connection-status.connected {
-    background-image: url("../img/connected.svg");
-}
-
-.connection-status.not-connected {
-    background-image: url("../img/transfer-error.svg");
-}
-
 .status-area {
     max-width: 720px;
     margin: 0 auto;
@@ -154,8 +137,35 @@ header {
     background: white;
 }
 
+.panel > :first-child {
+    margin-top: -1em;
+}
+
+.journal-content {
+    background: #2B3D50;
+    padding: 10px 10px 50px 10px;
+    font-size: 9pt;
+    color: #DAD9D9;
+    border-radius: 3px;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.journal-info {
+    color: #1AAF5C;
+    font-size: 9pt;
+    font-family: monospace;
+    margin: 0;
+    padding: 0 10px;
+    line-height: 40px;
+    border-top: 1px solid #33485E;
+    position: relative;
+    top: -50px;
+}
+
 /* Device registration form. */
 
 .device-id-group {
     margin: 10px 0;
 }
+

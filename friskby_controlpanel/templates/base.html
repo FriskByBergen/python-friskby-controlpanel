@@ -35,17 +35,17 @@
             </p>
 
             <ul class="statuses">
-                <li class="{% if sampler_status != 'active' %}not-{% endif %}ok">
+                <li class="{% if not sampler_status or sampler_status == 'failed' %}not-{% endif %}ok">
                     <a href="{{ url_for('status', service_name='sampler')}}">
                         Sampler <span>{{ sampler_status or "N/A" }}</span>
                     </a>
                 </li>
-                <li class="{% if submitter_status != 'active' %}not-{% endif %}ok">
+                <li class="{% if not submitter_status or submitter_status == 'failed' %}not-{% endif %}ok">
                     <a href="{{ url_for('status', service_name='submitter')}}">
                         Submitter <span>{{ submitter_status or "N/A" }}</span>
                     </a>
                 </li>
-                <li class="{% if friskby_status != 'active' %}not-{% endif %}ok">
+                <li class="{% if not friskby_status or friskby_status == 'failed' %}not-{% endif %}ok">
                     <a href="{{ url_for('status', service_name='friskby')}}">
                         Friskby <span>{{ friskby_status or "N/A" }}</span>
                     </a>
@@ -56,6 +56,5 @@
     </header>
 
     <div class="panel">{% block body %}{% endblock %}</div>
-    <script src="js/scripts.js"></script>
 </body>
 </html>

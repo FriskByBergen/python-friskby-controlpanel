@@ -53,7 +53,7 @@ class SystemdDBus():
                 Path, JobId, JobType, JobPath
             }
         """
-        active_units = self.manager.ListUnitsFiltered(['active'])
+        active_units = self.manager.ListUnits()
         for ret in active_units:
             if ret[0] == unit:
                 return ret

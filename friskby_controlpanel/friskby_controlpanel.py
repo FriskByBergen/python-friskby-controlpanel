@@ -23,6 +23,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import sys
+import inspect
 from friskby_interface import FriskbyInterface
 from flask import (Flask, request, redirect, g, url_for, render_template)  # noqa
 
@@ -33,9 +34,17 @@ app.config.update(dict(
     FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
     FRISKBY_SENSOR_PATH='/sensor/api/device',
     FRISKBY_DEVICE_CONFIG_PATH='/usr/local/friskby/etc/config.json',
-    FRISKBY_INTERFACE=FriskbyInterface()
+    FRISKBY_INTERFACE=FriskbyInterface
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
+
+
+@app.before_request
+def before_request():
+    """Initializes the friskby interface if it wasn't already."""
+    iface = app.config['FRISKBY_INTERFACE']
+    if inspect.isclass(iface):
+        app.config['FRISKBY_INTERFACE'] = iface()
 
 
 @app.context_processor

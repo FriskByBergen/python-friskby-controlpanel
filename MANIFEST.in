@@ -1,4 +1,5 @@
 recursive-include friskby_controlpanel/templates *
 recursive-include friskby_controlpanel/static *
+recursive-include tests *.py
 include README.md
 

@@ -1,3 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
+
+<p>
+{% if has_sampled and has_uploaded %}
+This device is sampling, and has uploaded data to the server at {{ most_recent_upload }}.
+{% elif has_sampled and not has_uploaded %}
+This device is sampling, but has not yet uploaded data to the server. The last sample was taken at {{ most_recent_sample }}.
+{% else %}
+This device is neither sampling, nor uploading anything to the server.
+{% endif %}
+</p>
+
 {% endblock %}

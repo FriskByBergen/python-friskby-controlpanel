@@ -89,7 +89,12 @@ def dashboard():
     if not device_id:
         return redirect(url_for('register'))
 
-    return render_template('dashboard.html')
+    return render_template(
+        'dashboard.html',
+        has_sampled=fby_iface.get_all_samples_count() > 0,
+        has_uploaded=fby_iface.get_uploaded_samples_count() > 0,
+        most_recent_sample=fby_iface.get_most_recently_sampled(),
+        most_recent_upload=fby_iface.get_most_recently_uploaded())
 
 
 @app.route('/register', methods=['GET', 'POST'])

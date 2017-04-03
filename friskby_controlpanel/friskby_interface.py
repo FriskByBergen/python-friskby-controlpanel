@@ -28,7 +28,8 @@ except ImportError:
 
 import subprocess
 import sys
-from friskby import DeviceConfig
+from friskby import DeviceConfig, FriskbyDao
+from rpiparticle import get_setting
 
 SYSTEMD_NAME = 'org.freedesktop.systemd1'
 SYSTEMD_OBJ = '/org/freedesktop/systemd1'
@@ -66,6 +67,7 @@ class FriskbyInterface():
 
     def __init__(self):
         self.systemd = SystemdDBus()
+        self.dao = FriskbyDao(get_setting("rpi_db"))
 
     def _service_to_unit(self, service):
         """Returns a unit or None if the service wasn't pertinent to the
@@ -136,3 +138,17 @@ class FriskbyInterface():
         if device_id == "" or device_id is None:
             return None
         return device_id
+
+    def get_uploaded_samples_count(self):
+        fetch_uploaded = True
+        return self.dao.get_num_rows(fetch_uploaded)
+
+    def get_all_samples_count(self):
+        return self.dao.get_num_rows()
+
+    def get_most_recently_uploaded(self):
+        fetch_uploaded_entry = True
+        return self.dao.last_entry(fetch_uploaded_entry)
+
+    def get_most_recently_sampled(self):
+        return self.dao.last_entry()

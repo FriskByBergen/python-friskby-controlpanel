@@ -20,6 +20,7 @@
 
 from friskby_controlpanel import friskby_controlpanel as cp
 from fake_friskby_interface import FakeFriskbyInterface
+from datetime import datetime
 import unittest
 
 
@@ -35,6 +36,35 @@ class DashboardTestCase(unittest.TestCase):
         self.iface.device_id = 'mydevice'
         out = self.app.get('/')
         self.assertIn("mydevice", out.data)
+
+    def test_no_sampling_nor_any_upload_has_happened(self):
+        self.iface.device_id = 'mydevice'
+        out = self.app.get('/')
+        self.assertIn(
+            """This device is neither sampling, nor uploading anything to the server.""",  # noqa
+            out.data
+        )
+
+    def test_sampling_but_no_uploading(self):
+        self.iface.device_id = 'mydevice'
+        self.iface.all_samples_count = 1
+        self.iface.most_recently_sampled = datetime(2007, 12, 5, 12, 0, 0)
+        out = self.app.get('/')
+        self.assertIn(
+            """This device is sampling, but has not yet uploaded data to the server. The last sample was taken at 2007-12-05 12:00:00.""",  # noqa
+            out.data
+        )
+
+    def test_sampling_and_uploading(self):
+        self.iface.device_id = 'mydevice'
+        self.iface.uploaded_samples_count = 1
+        self.iface.all_samples_count = 1
+        self.iface.most_recently_uploaded = datetime(2007, 12, 5, 12, 0, 0)
+        out = self.app.get('/')
+        self.assertIn(
+            """This device is sampling, and has uploaded data to the server at 2007-12-05 12:00:00.""",  # noqa
+            out.data
+        )
 
 
 if __name__ == '__main__':

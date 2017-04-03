@@ -28,6 +28,12 @@ class FakeFriskbyInterface():
         self.fails = False
         self.device_id = None
 
+        self.uploaded_samples_count = 0
+        self.all_samples_count = 0
+
+        self.most_recently_uploaded = None
+        self.most_recently_sampled = None
+
         self.sampler_status = None
         self.sampler_journal = None
 
@@ -45,3 +51,15 @@ class FakeFriskbyInterface():
     def get_service_journal(self, service):
         if service == 'sampler':
             return self.sampler_journal
+
+    def get_uploaded_samples_count(self):
+        return self.uploaded_samples_count
+
+    def get_all_samples_count(self):
+        return self.all_samples_count
+
+    def get_most_recently_uploaded(self):
+        return self.most_recently_uploaded
+
+    def get_most_recently_sampled(self):
+        return self.most_recently_sampled

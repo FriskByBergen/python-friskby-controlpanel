@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='friskby-controlpanel',
-    version='0.4.2',
+    version='0.5.0',
     description='Friskby device control panel',
     long_description=long_description,
     url='https://github.com/FriskByBergen/python-friskby-controlpanel',
@@ -30,6 +30,6 @@ setup(
 
     # Note that we require that dbus-python is installed on the system, but if
     # we require it here, this package becomes architecture dependent.
-    install_requires=['friskby', 'flask'],
+    install_requires=['friskby', 'flask', 'rpiparticle'],
     test_suite='tests',
 )

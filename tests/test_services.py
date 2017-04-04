@@ -63,6 +63,20 @@ class StatusTestCase(unittest.TestCase):
         self.assertIn(self.iface.sampler_status, out.data)
         self.assertIn("Starting System Logging Service..", out.data)
 
+    def test_managing_non_existing_service(self):
+        out = self.app.get('/service/baz/stop', follow_redirects=True)
+        self.assertIn('No such service (baz) or action (stop).', out.data)
+
+    def test_managing_non_service_with_bad_action(self):
+        out = self.app.get('/service/sampler/fly_away', follow_redirects=True)
+        self.assertIn('No such service (sampler) or action (fly_away).',
+                      out.data)
+
+    def test_manage_known_service(self):
+        out = self.app.get('/service/sampler/restart', follow_redirects=True)
+        self.assertIn('Requested restart on service sampler.',
+                      out.data)
+
 
 if __name__ == '__main__':
     unittest.main()

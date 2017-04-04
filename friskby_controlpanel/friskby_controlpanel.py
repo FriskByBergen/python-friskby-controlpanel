@@ -25,8 +25,8 @@
 import sys
 import inspect
 from . import ctljson
-from .friskby_interface import FriskbyInterface
-from flask import (Flask, request, redirect, url_for, render_template)  # noqa
+from flask import (Flask, request, redirect, flash, url_for, render_template)  # noqa
+from friskby_interface import FriskbyInterface
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -38,6 +38,7 @@ app.config.update(dict(
     FRISKBY_INTERFACE=FriskbyInterface
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
+app.secret_key = 'we actually do not care too much'
 
 
 @app.before_request
@@ -157,6 +158,8 @@ def status(service_name):
         error = 'No such service: %s (%s).' % (service_name, e)
         print(error)
         sys.stdout.flush()
+        flash(error)
+        return redirect(url_for('dashboard'))
     else:  # There could be something in the journal at this point.
         for key in ctljson.KEYS:
             for entry in service_journal:
@@ -173,3 +176,22 @@ def status(service_name):
         status=service_status,
         journal=service_journal
     )
+
+
+@app.route('/service/<string:service_name>/<string:action_name>')
+def status_manage(service_name, action_name):
+    """Manages a service."""
+    iface = app.config['FRISKBY_INTERFACE']
+
+    try:
+        iface.manage_service(service_name, action_name)
+    except KeyError:
+        error = 'No such service (%s) or action (%s).' % (service_name,
+                                                          action_name)
+        print(error)
+        sys.stdout.flush()
+        flash(error)
+        return redirect(url_for('dashboard'))
+
+    flash('Requested %s on service %s.' % (action_name, service_name))
+    return redirect(url_for('status', service_name=service_name))

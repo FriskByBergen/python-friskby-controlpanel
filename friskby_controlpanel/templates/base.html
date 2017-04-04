@@ -56,5 +56,20 @@
     </header>
 
     <div class="panel">{% block body %}{% endblock %}</div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+        <ul class="flashes">
+            <li>u done goofed</li>
+            <li>fuck my life</li>
+        </ul>
+
 </body>
 </html>

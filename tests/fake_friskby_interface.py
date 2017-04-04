@@ -5,6 +5,9 @@
     In interface between Friskby Control panel, and everything required from
     the rest of the friskby universe.
 
+    Note that this fake interface only considers the 'submitter' service to
+    be worthy mocking. It also will only consider the 'restart' action.
+
     Licence
     =======
     This program is free software: you can redistribute it and/or modify
@@ -38,6 +41,11 @@ class FakeFriskbyInterface():
         self.sampler_journal = []
         self.socket = None
 
+    def _check_service(self, service_name):
+        services = ['sampler', 'submitter', 'friskby']
+        if service_name not in services:
+            raise ValueError("No such service")
+
     def download_and_save_config(self, url, filename):
         if self.fails:
             raise ValueError("Was asked to fail for url %s -> %s." % (
@@ -51,11 +59,21 @@ class FakeFriskbyInterface():
         if service == 'sampler':
             return self.sampler_status
 
+        self._check_service(service)
+
     def get_service_journal(self, service):
         if service == 'sampler':
             return self.sampler_journal
         else:
             return []
+
+        self._check_service(service)
+
+    def manage_service(self, service, action):
+        self._check_service(service)
+
+        if action != 'restart':
+            raise ValueError('%s is not an action I know of...' % action)
 
     def get_uploaded_samples_count(self):
         return self.uploaded_samples_count

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
     (c) 2017 FriskbyBergen.
@@ -27,7 +28,7 @@ def start_in_test_mode(host, port):
     cp.app.config['TESTING'] = True
     cp.app.config['FRISKBY_INTERFACE'] = iface
 
-    iface.device_id = 'mydevice'
+    iface.device_id = 'test device'
     iface.sampler_status = 'active'
     iface.sampler_journal = 'Doesn\'t look like anything to me.'
 

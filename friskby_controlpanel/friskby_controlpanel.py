@@ -24,6 +24,7 @@
 """
 import sys
 import inspect
+import ctljson
 from friskby_interface import FriskbyInterface
 from flask import (Flask, request, redirect, g, url_for, render_template)  # noqa
 
@@ -146,7 +147,7 @@ def status(service_name):
     iface = app.config['FRISKBY_INTERFACE']
     error = None
     service_status = None
-    service_journal = None
+    service_journal = []
 
     try:
         service_status = iface.get_service_status(service_name)
@@ -155,6 +156,14 @@ def status(service_name):
         error = 'No such service: %s.' % service_name
         print(error)
         sys.stdout.flush()
+    else:  # There could be something in the journal at this point.
+        for key in ctljson.KEYS:
+            for entry in service_journal:
+                if key in entry:
+                    export_key = ctljson.KEYS[key]
+                    entry[export_key] = ctljson.parse_message(
+                        export_key, entry[key]
+                    )
 
     return render_template(
         'service.html',

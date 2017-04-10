@@ -35,7 +35,7 @@ class FakeFriskbyInterface():
         self.most_recently_sampled = None
 
         self.sampler_status = None
-        self.sampler_journal = None
+        self.sampler_journal = []
 
     def download_and_save_config(self, url, filename):
         if self.fails:
@@ -51,6 +51,8 @@ class FakeFriskbyInterface():
     def get_service_journal(self, service):
         if service == 'sampler':
             return self.sampler_journal
+        else:
+            return []
 
     def get_uploaded_samples_count(self):
         return self.uploaded_samples_count

@@ -15,9 +15,16 @@
     {% endif %}
 
 
-    <pre class="journal-content">
-        {{- journal -}}
-    </pre>
+    <ul class="journal-content">
+        {% for line in journal %}
+            <li class="log-line">
+            <span class="timestamp">{{line.timestamp_realtime}}</span>
+            <span class="message">{{line.message}}</span>
+            </li>
+        {% else %}
+            <li>Nothing has been logged yet…</li>
+        {% endfor %}
+    </ul>
 {% endif %}
 
 {% endblock %}

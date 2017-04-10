@@ -26,6 +26,7 @@ try:
 except ImportError:
     raise ImportError('Please install python-dbus.')
 
+import json
 import subprocess
 import sys
 from friskby import DeviceConfig, FriskbyDao
@@ -100,26 +101,39 @@ class FriskbyInterface():
         except TypeError:
             return None
 
-    def get_service_journal(self, service):
-        """Returns the full output from journalctl where unit is the given
-        service. Only services pertinent to the friskby system will be
-        considered."""
+    def get_service_journal(self, service, limit=50):
+        """Returns a list of dicts containing output from journalctl where unit
+        is the given service. Only services pertinent to the friskby system
+        will be considered.
+
+        Limit is the maximum amount of log lines to be returned. None implies
+        no limit.
+
+        See https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html  # noqa
+        for information on what the list of dicts contains.
+        """
         unit = self._service_to_unit(service)
 
         if service is None:
             raise ValueError('%s is not a pertinent service.' % service)
 
-        content = None
+        output = None
+        lines = []
+        args = [
+            "journalctl",
+            "--unit=%s" % unit,
+            "--catalog",
+            "--full",
+            "-o", "json"
+        ]
+
+        if limit is None:
+            args + ["--lines", "all"]
+        else:
+            args + ["--lines", limit]
 
         try:
-            content = subprocess.check_output([
-                "journalctl",
-                "--unit=%s" % unit,
-                "--catalog",
-                "--full",
-                "--all",
-                "--no-pager"
-            ])
+            output = subprocess.check_output(args)
         except subprocess.CalledProcessError as e:
             """This means we got a non-zero exit code from journalctl. We can
             do naught but log."""
@@ -128,8 +142,13 @@ class FriskbyInterface():
                                                       int(e.returncode),
                                                       e.output))
             sys.stdout.flush()
+        else:  # No process error, so let's take a look at the output
+            for line in output:
+                js = json.loads(line)
+                lines.append(js)
 
-        return content
+        lines.reverse()
+        return lines
 
     def get_device_id(self, filename):
         """Returns the device id, or None."""

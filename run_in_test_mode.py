@@ -30,7 +30,41 @@ def start_in_test_mode(host, port):
 
     iface.device_id = 'test device'
     iface.sampler_status = 'active'
-    iface.sampler_journal = 'Doesn\'t look like anything to me.'
+    iface.sampler_journal = [
+        {
+            "__REALTIME_TIMESTAMP": "1491213967810472",
+            "__MONOTONIC_TIMESTAMP": "8281790",
+            "MESSAGE_ID": "7d4958e842da4a758f6c1cdc7b36dcc5",
+            "_PID": "1",
+            "_COMM": "systemd",
+            "_EXE": "/lib/systemd/systemd",
+            "_CMDLINE": "/sbin/init splash",
+            "UNIT": "rsyslog.service",
+            "MESSAGE": "Starting System Logging Service...",
+        },
+        {
+            "__REALTIME_TIMESTAMP": "1491213967813472",
+            "__MONOTONIC_TIMESTAMP": "8381790",
+            "MESSAGE_ID": "dd4958e842da5321233c13dcdd3cdccd",
+            "_PID": "1",
+            "_COMM": "systemd",
+            "_EXE": "/lib/systemd/systemd",
+            "_CMDLINE": "/sbin/init splash",
+            "UNIT": "rsyslog.service",
+            "MESSAGE": "Doesn't look like anything to me.",
+        },
+        {
+            "__REALTIME_TIMESTAMP": "2491213967813472",
+            "__MONOTONIC_TIMESTAMP": "8383790",
+            "MESSAGE_ID": "aa4958e842da5321233c13dcdd3cdccd",
+            "_PID": "1",
+            "_COMM": "systemd",
+            "_EXE": "/lib/systemd/systemd",
+            "_CMDLINE": "/sbin/init splash",
+            "UNIT": "rsyslog.service",
+            "MESSAGE": "This is a really really really really really really really really really really really really really really really really really really really long line.",  # noqa
+        }
+    ]
 
     cp.app.run(
         debug=True,

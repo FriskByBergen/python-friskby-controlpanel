@@ -148,20 +148,17 @@ header {
     color: #DAD9D9;
     border-radius: 3px;
     margin: 0;
-    white-space: pre-wrap;
     max-height: 500px;
-}
-
-.journal-info {
-    color: #1AAF5C;
+    list-style: none;
     font-size: 9pt;
     font-family: monospace;
-    margin: 0;
-    padding: 0 10px;
-    line-height: 40px;
-    border-top: 1px solid #33485E;
-    position: relative;
-    top: -50px;
+}
+
+.log-line .timestamp {
+    opacity: 0.5;
+}
+
+.log-line .message {
 }
 
 /* Device registration form. */

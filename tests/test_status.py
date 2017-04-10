@@ -46,10 +46,22 @@ class StatusTestCase(unittest.TestCase):
 
     def test_service_page(self):
         self.iface.sampler_status = 'superactive'
-        self.iface.sampler_journal = 'this is the sampler journal'
+        self.iface.sampler_journal = [
+            {
+                "__REALTIME_TIMESTAMP": "1491213967810472",
+                "__MONOTONIC_TIMESTAMP": "8281790",
+                "MESSAGE_ID": "7d4958e842da4a758f6c1cdc7b36dcc5",
+                "_PID": "1",
+                "_COMM": "systemd",
+                "_EXE": "/lib/systemd/systemd",
+                "_CMDLINE": "/sbin/init splash",
+                "UNIT": "rsyslog.service",
+                "MESSAGE": "Starting System Logging Service...",
+            }
+        ]
         out = self.app.get('/service/sampler')
         self.assertIn(self.iface.sampler_status, out.data)
-        self.assertIn(self.iface.sampler_journal, out.data)
+        self.assertIn("Starting System Logging Service..", out.data)
 
 
 if __name__ == '__main__':

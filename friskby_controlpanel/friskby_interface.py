@@ -93,7 +93,7 @@ class FriskbyInterface():
         unit = self._service_to_unit(service)
 
         if service is None:
-            raise ValueError('%s is not a pertinent service.' % service)
+            raise KeyError('%s is not a pertinent service.' % service)
 
         status = self.systemd.get_unit_status(unit)
         try:
@@ -115,7 +115,7 @@ class FriskbyInterface():
         unit = self._service_to_unit(service)
 
         if service is None:
-            raise ValueError('%s is not a pertinent service.' % service)
+            raise KeyError('%s is not a pertinent service.' % service)
 
         output = None
         lines = []
@@ -128,9 +128,9 @@ class FriskbyInterface():
         ]
 
         if limit is None:
-            args + ["--lines", "all"]
+            args = args + ["--lines", "all"]
         else:
-            args + ["--lines", limit]
+            args = args + ["--lines", str(limit)]
 
         try:
             output = subprocess.check_output(args)
@@ -143,9 +143,10 @@ class FriskbyInterface():
                                                       e.output))
             sys.stdout.flush()
         else:  # No process error, so let's take a look at the output
-            for line in output:
-                js = json.loads(line)
-                lines.append(js)
+            for line in output.split("\n"):
+                if line != "":
+                    js = json.loads(line)
+                    lines.append(js)
 
         lines.reverse()
         return lines

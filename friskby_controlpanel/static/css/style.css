@@ -150,12 +150,19 @@ header {
     margin: 0;
     max-height: 500px;
     list-style: none;
-    font-size: 9pt;
+    font-size: 8pt;
     font-family: monospace;
+    overflow-y: scroll;
+}
+
+.log-line td {
+    padding: 0 0 3px 0;
 }
 
 .log-line .timestamp {
     opacity: 0.5;
+    width: 140px;
+    vertical-align: text-top;
 }
 
 .log-line .message {

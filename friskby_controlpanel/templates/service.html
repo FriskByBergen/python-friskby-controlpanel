@@ -15,16 +15,22 @@
     {% endif %}
 
 
-    <ul class="journal-content">
+    <div class="journal-content">
+        <table>
+        <tbody>
         {% for line in journal %}
-            <li class="log-line">
-            <span class="timestamp">{{line.timestamp_realtime}}</span>
-            <span class="message">{{line.message}}</span>
-            </li>
+            <tr class="log-line">
+                <td class="timestamp">{{line.timestamp_realtime}}</td>
+                <td class="message">{{line.message}}</td>
+            </tr>
         {% else %}
-            <li>Nothing has been logged yet…</li>
+            <tr class="log-line-empty">
+                <td>Nothing has been logged yet…</td>
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+        </table>
+    </div>
 {% endif %}
 
 {% endblock %}

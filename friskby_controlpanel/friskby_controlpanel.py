@@ -152,8 +152,8 @@ def status(service_name):
     try:
         service_status = iface.get_service_status(service_name)
         service_journal = iface.get_service_journal(service_name)
-    except ValueError:
-        error = 'No such service: %s.' % service_name
+    except KeyError as e:
+        error = 'No such service: %s (%s).' % (service_name, e)
         print(error)
         sys.stdout.flush()
     else:  # There could be something in the journal at this point.

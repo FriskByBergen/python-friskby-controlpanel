@@ -26,6 +26,7 @@ try:
 except ImportError:
     raise ImportError('Please install python-dbus.')
 
+import socket
 import json
 import subprocess
 import sys
@@ -172,3 +173,14 @@ class FriskbyInterface():
 
     def get_most_recently_sampled(self):
         return self.dao.last_entry()
+
+    @staticmethod
+    def get_socket():
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("friskby.no", 80))
+            sockname = s.getsockname()[0]
+            s.close()
+            return sockname
+        except:
+            return None

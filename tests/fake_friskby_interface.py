@@ -36,6 +36,7 @@ class FakeFriskbyInterface():
 
         self.sampler_status = None
         self.sampler_journal = []
+        self.socket = None
 
     def download_and_save_config(self, url, filename):
         if self.fails:
@@ -65,3 +66,6 @@ class FakeFriskbyInterface():
 
     def get_most_recently_sampled(self):
         return self.most_recently_sampled
+
+    def get_socket_iface_address(self):
+        return self.socket

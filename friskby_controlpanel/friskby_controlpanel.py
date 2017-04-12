@@ -90,12 +90,14 @@ def dashboard():
     if not device_id:
         return redirect(url_for('register'))
 
+    sockname = fby_iface.get_socket_iface_address()
     return render_template(
         'dashboard.html',
         has_sampled=fby_iface.get_all_samples_count() > 0,
         has_uploaded=fby_iface.get_uploaded_samples_count() > 0,
         most_recent_sample=fby_iface.get_most_recently_sampled(),
-        most_recent_upload=fby_iface.get_most_recently_uploaded())
+        most_recent_upload=fby_iface.get_most_recently_uploaded(),
+        socket_iface_address=sockname)
 
 
 @app.route('/register', methods=['GET', 'POST'])

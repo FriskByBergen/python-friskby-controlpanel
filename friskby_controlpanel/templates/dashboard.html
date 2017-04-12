@@ -11,4 +11,12 @@ This device is neither sampling, nor uploading anything to the server.
 {% endif %}
 </p>
 
+<p>
+{% if socket_iface_address %}
+This client's address: <code>{{ socket_iface_address }}</code>.
+{% else %}
+Could not obtain this client's address.
+{% endif %}
+</p>
+
 {% endblock %}

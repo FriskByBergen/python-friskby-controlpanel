@@ -175,7 +175,7 @@ class FriskbyInterface():
         return self.dao.last_entry()
 
     @staticmethod
-    def get_socket():
+    def get_socket_iface_name():
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(("friskby.no", 80))

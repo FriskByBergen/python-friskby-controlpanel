@@ -90,7 +90,7 @@ def dashboard():
     if not device_id:
         return redirect(url_for('register'))
 
-    sockname = fby_iface.get_socket_iface_address()
+    sockname = fby_iface.get_socket_iface_name()
     return render_template(
         'dashboard.html',
         has_sampled=fby_iface.get_all_samples_count() > 0,

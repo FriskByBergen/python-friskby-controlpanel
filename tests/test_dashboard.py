@@ -67,7 +67,7 @@ class DashboardTestCase(unittest.TestCase):
         )
 
 
-    def test_socket_dashboard_no_socket(self):
+    def test_socket_iface_name(self):
         self.iface.device_id = 'mydevice'
         self.assertIn('Could not obtain', self.app.get('/').data)
         self.iface.socket = '27.182.81.82'

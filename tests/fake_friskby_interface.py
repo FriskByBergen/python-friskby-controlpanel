@@ -67,5 +67,5 @@ class FakeFriskbyInterface():
     def get_most_recently_sampled(self):
         return self.most_recently_sampled
 
-    def get_socket_iface_address(self):
+    def get_socket_iface_name(self):
         return self.socket

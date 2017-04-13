@@ -50,6 +50,11 @@
                         Friskby <span>{{ friskby_status or "N/A" }}</span>
                     </a>
                 </li>
+                <li class="{% if not friskby_controlpanel_status or friskby_controlpanel_status == 'failed' %}not-{% endif %}ok">
+                    <a href="{{ url_for('status', service_name='friskby_controlpanel')}}">
+                        Friskby Controlpanel <span>{{ friskby_controlpanel_status or "N/A" }}</span>
+                    </a>
+                </li>
             </ul>
         </div>
 

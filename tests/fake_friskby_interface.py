@@ -42,9 +42,9 @@ class FakeFriskbyInterface():
         self.socket = None
 
     def _check_service(self, service_name):
-        services = ['sampler', 'submitter', 'friskby']
+        services = ['sampler', 'submitter', 'friskby', 'friskby_controlpanel']
         if service_name not in services:
-            raise ValueError("No such service")
+            raise KeyError("No such service")
 
     def download_and_save_config(self, url, filename):
         if self.fails:

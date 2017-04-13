@@ -78,6 +78,7 @@ class FriskbyInterface():
             'friskby': 'friskby.service',
             'sampler': 'friskby-sampler.service',
             'submitter': 'friskby-submitter.service',
+            'friskby_controlpanel': 'friskby-controlpanel.service',
         }
         return known_units.get(service, None)
 

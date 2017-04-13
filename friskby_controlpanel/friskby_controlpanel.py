@@ -68,10 +68,14 @@ def inject_statuses():
     sampler_status = fby_iface.get_service_status('sampler')
     submitter_status = fby_iface.get_service_status('submitter')
     friskby_status = fby_iface.get_service_status('friskby')
+    friskby_controlpanel_status = fby_iface.get_service_status(
+        'friskby_controlpanel'
+    )
     return {
         'sampler_status': sampler_status,
         'submitter_status': submitter_status,
-        'friskby_status': friskby_status
+        'friskby_status': friskby_status,
+        'friskby_controlpanel_status': friskby_controlpanel_status,
     }
 
 

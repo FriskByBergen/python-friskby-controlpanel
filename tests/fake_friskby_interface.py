@@ -73,7 +73,7 @@ class FakeFriskbyInterface():
         self._check_service(service)
 
         if action != 'restart':
-            raise ValueError('%s is not an action I know of...' % action)
+            raise KeyError('%s is not an action I know of...' % action)
 
     def get_uploaded_samples_count(self):
         return self.uploaded_samples_count

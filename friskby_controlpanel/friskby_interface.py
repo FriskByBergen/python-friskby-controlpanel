@@ -62,6 +62,15 @@ class SystemdDBus():
                 return ret
         return None
 
+    def restart_unit(self, unit):
+        self.manager.RestartUnit(unit, 'replace')
+
+    def start_unit(self, unit):
+        self.manager.StartUnit(unit, 'replace')
+
+    def stop_unit(self, unit):
+        self.manager.StopUnit(unit, 'replace')
+
 
 # Glues DBus, python-friskby and other pertinent things together so as to
 # hide implementation details from the control panel.
@@ -185,3 +194,15 @@ class FriskbyInterface():
             return sockname
         except socket.error:
             return None
+
+    def manage_service(self, service, action):
+        unit = self._service_to_unit(service)
+
+        if action == 'restart':
+            self.systemd.restart_unit(unit)
+        elif action == 'start':
+            self.systemd.start_unit(unit)
+        elif action == 'stop':
+            self.systemd.stop_unit(unit)
+        else:
+            raise KeyError('%s is not an action I know of...' % action)

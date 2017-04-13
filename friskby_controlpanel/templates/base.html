@@ -66,15 +66,11 @@
         {% if messages %}
         <ul class="flashes">
             {% for message in messages %}
-            <li>{{ message }}</li>
+            <li><p>{{ message }}</p></li>
             {% endfor %}
         </ul>
         {% endif %}
     {% endwith %}
-        <ul class="flashes">
-            <li>u done goofed</li>
-            <li>fuck my life</li>
-        </ul>
-
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 </body>
 </html>

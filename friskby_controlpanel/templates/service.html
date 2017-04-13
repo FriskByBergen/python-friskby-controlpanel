@@ -14,6 +14,17 @@
         <p class="pure-form-message">This might mean that the service is not enabled or installed on your system.</p>
     {% endif %}
 
+    <div class="service-actions">
+        <form action="{{ url_for('status_manage', service_name=name, action_name='start') }}" method="post">
+            <button class="pure-button">Start</button>
+        </form>
+        <form action="{{ url_for('status_manage', service_name=name, action_name='stop') }}" method="post">
+            <button class="pure-button">Stop</button>
+        </form>
+        <form action="{{ url_for('status_manage', service_name=name, action_name='restart') }}" method="post">
+            <button class="pure-button">Restart</button>
+        </form>
+    </div>
 
     <div class="journal-content">
         <table>

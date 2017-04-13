@@ -182,7 +182,8 @@ def status(service_name):
     )
 
 
-@app.route('/service/<string:service_name>/<string:action_name>')
+@app.route('/service/<string:service_name>/<string:action_name>',
+           methods=['POST'])
 def status_manage(service_name, action_name):
     """Manages a service."""
     iface = app.config['FRISKBY_INTERFACE']

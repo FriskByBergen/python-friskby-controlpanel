@@ -50,11 +50,27 @@
                         Friskby <span>{{ friskby_status or "N/A" }}</span>
                     </a>
                 </li>
+                <li class="{% if not friskby_controlpanel_status or friskby_controlpanel_status == 'failed' %}not-{% endif %}ok">
+                    <a href="{{ url_for('status', service_name='friskby_controlpanel')}}">
+                        Friskby Controlpanel <span>{{ friskby_controlpanel_status or "N/A" }}</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
     </header>
 
     <div class="panel">{% block body %}{% endblock %}</div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li><p>{{ message }}</p></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 </body>
 </html>

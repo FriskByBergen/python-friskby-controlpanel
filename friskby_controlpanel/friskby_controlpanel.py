@@ -24,9 +24,9 @@
 """
 import sys
 import inspect
-import ctljson
-from friskby_interface import FriskbyInterface
-from flask import (Flask, request, redirect, g, url_for, render_template)  # noqa
+from . import ctljson
+from .friskby_interface import FriskbyInterface
+from flask import (Flask, request, redirect, url_for, render_template)  # noqa
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -128,8 +128,7 @@ def register():
             try:
                 fby_iface.download_and_save_config(config_url, config_path)
                 return redirect(url_for('registered'))
-            # TODO: Catch more specific exception(s).
-            except Exception as e:
+            except ValueError as e:
                 error = "Failed to download configuration: %s" % e
                 print(error)
                 sys.stdout.flush()

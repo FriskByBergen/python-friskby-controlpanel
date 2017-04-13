@@ -19,7 +19,7 @@
 """
 
 from friskby_controlpanel import friskby_controlpanel as cp
-from fake_friskby_interface import FakeFriskbyInterface
+from .fake_friskby_interface import FakeFriskbyInterface
 from datetime import datetime
 import unittest
 

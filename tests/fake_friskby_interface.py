@@ -40,9 +40,11 @@ class FakeFriskbyInterface():
 
     def download_and_save_config(self, url, filename):
         if self.fails:
-            raise ValueError("Was asked to fail.")
+            raise ValueError("Was asked to fail for url %s -> %s." % (
+                url, filename
+            ))
 
-    def get_device_id(self, filename):
+    def get_device_id(self, _):
         return self.device_id
 
     def get_service_status(self, service):

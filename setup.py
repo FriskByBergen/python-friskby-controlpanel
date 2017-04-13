@@ -32,4 +32,5 @@ setup(
     # we require it here, this package becomes architecture dependent.
     install_requires=['friskby', 'flask', 'rpiparticle'],
     test_suite='tests',
+    tests_require=['pylint']
 )

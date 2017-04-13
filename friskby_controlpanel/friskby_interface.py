@@ -136,10 +136,10 @@ class FriskbyInterface():
         try:
             output = subprocess.check_output(args)
         except subprocess.CalledProcessError as e:
-            """This means we got a non-zero exit code from journalctl. We can
-            do naught but log."""
+            # This means we got a non-zero exit code from journalctl. We can
+            # do naught but log.
             print("Failed to capture journalctl output for %s:"
-                  " %s exited with %d.\nOutput:%s" % (e.cmd,
+                  " %s exited with %d.\nOutput:%s" % (unit, e.cmd,
                                                       int(e.returncode),
                                                       e.output))
             sys.stdout.flush()
@@ -182,5 +182,5 @@ class FriskbyInterface():
             sockname = s.getsockname()[0]
             s.close()
             return sockname
-        except:
+        except socket.error:
             return None

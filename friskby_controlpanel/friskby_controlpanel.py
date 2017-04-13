@@ -26,7 +26,7 @@ import sys
 import inspect
 from . import ctljson
 from flask import (Flask, request, redirect, flash, url_for, render_template)  # noqa
-from friskby_interface import FriskbyInterface
+from .friskby_interface import FriskbyInterface
 
 app = Flask(__name__)
 app.config.from_object(__name__)

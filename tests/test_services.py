@@ -19,11 +19,11 @@
 """
 
 from friskby_controlpanel import friskby_controlpanel as cp
-from .fake_friskby_interface import FakeFriskbyInterface
+from tests.fake_friskby_interface import FakeFriskbyInterface
 import unittest
 
 
-class StatusTestCase(unittest.TestCase):
+class ServicesTestCase(unittest.TestCase):
 
     def setUp(self):
         self.iface = FakeFriskbyInterface()

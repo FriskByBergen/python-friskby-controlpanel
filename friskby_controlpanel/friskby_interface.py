@@ -184,6 +184,10 @@ class FriskbyInterface():
     def get_most_recently_sampled(self):
         return self.dao.last_entry()
 
+    def get_recent_samples(self):
+        data = self.dao.get_recent_samples(limit=10)
+        return data
+
     @staticmethod
     def get_socket_iface_name():
         try:

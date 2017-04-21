@@ -73,6 +73,9 @@ class DashboardTestCase(unittest.TestCase):
         self.iface.socket = '27.182.81.82'
         self.assertIn('27.182.81.82', self.app.get('/').data)
 
+    def test_get_recent_samples(self):
+        self.iface.device_id = 'mydevice'
+        self.assertIn('PM10', self.app.get('/').data)
 
 if __name__ == '__main__':
     unittest.main()

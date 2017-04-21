@@ -24,6 +24,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from datetime import datetime as dt
 
 class FakeFriskbyInterface():
 
@@ -89,3 +90,11 @@ class FakeFriskbyInterface():
 
     def get_socket_iface_name(self):
         return self.socket
+
+    def get_recent_samples(self):
+        limit = 10
+        data = []
+        for i in range(limit):
+            row = (42+i, 42+i/10.0, 'PM10' if i % 2 else 'PM25', dt.now(), i < limit-2)
+            data.append(row)
+        return data

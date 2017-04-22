@@ -19,7 +19,17 @@ Could not obtain this client's address.
 {% endif %}
 </p>
 
-<table>
+<p>Recent samples:</p>
+<table style="width: 100%" class="pure-table">
+<thead>
+    <tr>
+        <td>ID</td>
+        <td>Value</td>
+        <td>Sample type</td>
+        <td>Time</td>
+        <td>Uploaded</td>
+    </tr>
+</thead>
 {% for row in get_recent_samples %}
   <tr>
     {% for elt in row %}

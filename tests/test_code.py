@@ -37,7 +37,7 @@ class CodeTestCase(unittest.TestCase):
         files = self._get_lintable_files('friskby_controlpanel')
         files = files + self._get_lintable_files('tests')
         for f in files:
-            self.assertEqual(lint.lint(f), 0, 'pylint failed')
+            self.assertEqual(lint.lint(f), 0, 'linting required for %s' % f)
 
 
 if __name__ == '__main__':

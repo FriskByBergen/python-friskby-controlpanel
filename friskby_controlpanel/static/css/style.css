@@ -230,3 +230,11 @@ header {
 .service-actions form {
     display: inline;
 }
+
+td.recent_sample_uploaded {
+    color: #090 !important;
+}
+
+td.recent_sample_nonuploaded {
+    color: #900 !important;
+}

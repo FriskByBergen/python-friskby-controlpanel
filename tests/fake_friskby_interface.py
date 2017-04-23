@@ -95,6 +95,6 @@ class FakeFriskbyInterface():
         limit = 10
         data = []
         for i in range(limit):
-            row = (42+i, 42+i/10.0, 'PM10' if i % 2 else 'PM25', dt.now(), i < limit-2)
+            row = (42+i, 42+i/10.0, 'PM10' if i % 2 else 'PM25', dt.now(), 0 if i < 2 else 1)
             data.append(row)
         return data

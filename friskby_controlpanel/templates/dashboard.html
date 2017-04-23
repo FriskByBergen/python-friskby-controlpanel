@@ -32,9 +32,15 @@ Could not obtain this client's address.
 </thead>
 {% for row in get_recent_samples %}
   <tr>
-    {% for elt in row %}
-      <td>{{ elt }}</td>
-    {% endfor %}
+  <td>{{ row[0] }}</td>
+  <td>{{ row[1] }}</td>
+  <td>{{ row[2] }}</td>
+  <td>{{ row[3] }}</td>
+  {% if row[4] %}
+  <td class="recent_sample_uploaded">uploaded</td>
+  {% else %}
+  <td class="recent_sample_nonuploaded">not yet uploaded</td>
+  {% endif %}
   </tr>
 {% endfor %}
 </table>

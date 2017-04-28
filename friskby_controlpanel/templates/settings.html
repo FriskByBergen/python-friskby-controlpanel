@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<form class="pure-form pure-form-stacked" action="{{ url_for('settings') }}" method="post">
+    <fieldset>
+
+        <div class="pure-control-group rpi_sample_time-group">
+            <label for="rpi_sample_time">Sample interval</label>
+            {{form.rpi_sample_time}}
+            <span class="pure-form-message">The number of minutes between each sample is taken.</span>
+            {% if errors.rpi_sample_time %}
+                <ul class="form-errors">
+                {% for e in errors.rpi_sample_time %}
+                    <li>{{ e }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="pure-control-group rpi_control_panel_host-group">
+            <label for="rpi_control_panel_host">Host</label>
+            {{form.rpi_control_panel_host}}
+            <span class="pure-form-message">This must be a valid IP address.</span>
+            {% if errors.rpi_control_panel_host %}
+                <ul class="form-errors">
+                {% for e in errors.rpi_control_panel_host %}
+                    <li>{{ e }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+
+        </div>
+
+        <div class="pure-control-group rpi_control_panel_port-group">
+            <label for="rpi_control_panel_port">Port</label>
+            {{form.rpi_control_panel_port}}
+            {% if errors.rpi_control_panel_port %}
+                <ul class="form-errors">
+                {% for e in errors.rpi_control_panel_port %}
+                    <li>{{ e }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="pure-control-group rpi_sds011-group">
+            <label for="rpi_sds011">Particle sensor path</label>
+            {{form.rpi_sds011}}
+            {% if errors.rpi_sds011 %}
+                <ul class="form-errors">
+                {% for e in errors.rpi_sds011 %}
+                    <li>{{ e }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+
+        </div>
+
+        <button type="submit" class="pure-button pure-button-primary">Save</button>
+    </fieldset>
+</form>
+{% endblock %}

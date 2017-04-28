@@ -238,3 +238,11 @@ td.recent_sample_uploaded {
 td.recent_sample_nonuploaded {
     color: #900 !important;
 }
+
+.form-errors {
+    color: red;
+}
+
+.settings-url {
+    color: #0077E5
+}

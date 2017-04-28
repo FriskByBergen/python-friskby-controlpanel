@@ -31,7 +31,8 @@ import json
 import subprocess
 import sys
 from friskby import DeviceConfig, FriskbyDao
-from rpiparticle import get_setting
+from rpiparticle import fby_settings
+
 
 SYSTEMD_NAME = 'org.freedesktop.systemd1'
 SYSTEMD_OBJ = '/org/freedesktop/systemd1'
@@ -78,7 +79,7 @@ class FriskbyInterface():
 
     def __init__(self):
         self.systemd = SystemdDBus()
-        self.dao = FriskbyDao(get_setting("rpi_db"))
+        self.dao = FriskbyDao(fby_settings.get_setting("rpi_db"))
 
     def _service_to_unit(self, service):
         """Returns a unit or None if the service wasn't pertinent to the
@@ -210,3 +211,16 @@ class FriskbyInterface():
             self.systemd.stop_unit(unit)
         else:
             raise KeyError('%s is not an action I know of...' % action)
+
+    def get_settings(self):
+        return fby_settings.get_settings()
+
+    def set_settings(self, settings):
+        fby_settings.set_setting('rpi_sample_time',
+                                 settings['rpi_sample_time'])
+        fby_settings.set_setting('rpi_control_panel_host',
+                                 settings['rpi_control_panel_host'])
+        fby_settings.set_setting('rpi_control_panel_port',
+                                 settings['rpi_control_panel_port'])
+        fby_settings.set_setting('rpi_sds011',
+                                 settings['rpi_sds011'])

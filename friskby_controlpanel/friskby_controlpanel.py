@@ -27,6 +27,7 @@ import inspect
 from . import ctljson
 from flask import (Flask, request, redirect, flash, url_for, render_template)  # noqa
 from .friskby_interface import FriskbyInterface
+from .forms import SettingsForm
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -35,7 +36,8 @@ app.config.update(dict(
     FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
     FRISKBY_SENSOR_PATH='/sensor/api/device',
     FRISKBY_DEVICE_CONFIG_PATH='/usr/local/friskby/etc/config.json',
-    FRISKBY_INTERFACE=FriskbyInterface
+    FRISKBY_INTERFACE=FriskbyInterface,
+    WTF_CSRF_ENABLED=False
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
 app.secret_key = 'we actually do not care too much'
@@ -201,3 +203,24 @@ def status_manage(service_name, action_name):
 
     flash('Requested %s on service %s.' % (action_name, service_name))
     return redirect(url_for('status', service_name=service_name))
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    """Displays and allows changing of settings."""
+    iface = app.config['FRISKBY_INTERFACE']
+    form = None
+
+    if request.method == 'GET':
+        form = SettingsForm(data=iface.get_settings())
+    else:
+        form = SettingsForm()  # defaults to flask.request.form
+        if form.validate_on_submit():
+            flash('Settings saved.')
+            iface.set_settings(form.data)
+        else:
+            flash('Form had errors.')
+
+    return render_template(
+        'settings.html', form=form, errors=form.errors
+    )

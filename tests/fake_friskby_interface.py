@@ -26,6 +26,7 @@
 
 from datetime import datetime as dt
 
+
 class FakeFriskbyInterface():
 
     def __init__(self):
@@ -41,6 +42,8 @@ class FakeFriskbyInterface():
         self.sampler_status = None
         self.sampler_journal = []
         self.socket = None
+
+        self.settings = dict()
 
     def _check_service(self, service_name):
         services = ['sampler', 'submitter', 'friskby', 'friskby_controlpanel']
@@ -98,3 +101,9 @@ class FakeFriskbyInterface():
             row = (42+i, 42+i/10.0, 'PM10' if i % 2 else 'PM25', dt.now(), 0 if i < 2 else 1)
             data.append(row)
         return data
+
+    def get_settings(self):
+        return self.settings
+
+    def set_settings(self, settings):
+        self.settings = settings

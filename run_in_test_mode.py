@@ -29,6 +29,12 @@ def start_in_test_mode(host, port):
     cp.app.config['FRISKBY_INTERFACE'] = iface
 
     iface.device_id = 'test device'
+    iface.settings = {
+        "rpi_sample_time": 42,
+        "rpi_control_panel_host": "example.org",
+        "rpi_control_panel_port": "80",
+        "rpi_sds011": "/dev/foo/bar/baz"
+    }
     iface.sampler_status = 'active'
     iface.sampler_journal = [
         {

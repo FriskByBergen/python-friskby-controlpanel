@@ -37,5 +37,13 @@ setup(
         'Flask-WTF',
     ],
     test_suite='tests',
-    tests_require=['pylint']
+    tests_require=['pylint'],
+    data_files=[
+        (
+            './bin',
+            [
+                'bin/fby_init'
+            ]
+        )
+    ]
 )

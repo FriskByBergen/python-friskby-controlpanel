@@ -36,6 +36,7 @@ class CodeTestCase(unittest.TestCase):
     def test_linting(self):
         files = self._get_lintable_files('friskby_controlpanel')
         files = files + self._get_lintable_files('tests')
+        files.append('bin/fby_init')
         for f in files:
             self.assertEqual(lint.lint(f), 0, 'linting required for %s' % f)
 

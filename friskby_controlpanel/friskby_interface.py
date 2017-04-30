@@ -212,6 +212,10 @@ class FriskbyInterface():
         else:
             raise KeyError('%s is not an action I know of...' % action)
 
+    def manage(self, action):
+        for service in self.known_units.keys():
+            self.manage_service(service, action)
+
     def get_settings(self):
         return fby_settings.get_settings()
 

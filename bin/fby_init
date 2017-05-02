@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+import sys
+from friskby import DeviceConfig
+import friskby_controlpanel.friskby_settings as settings
+from friskby_controlpanel import FriskbyInterface
+
+
+def error_exit():
+    msg = """
+The fby_init shell script should be invoked with the device id of
+your device as commandline argument:
+
+   fby_init myFriskPI_id
+
+Make sure that the device has been 'unlocked' in the control panel of
+the Friskby server before attempting to initialize. When the
+initialization has completed you will get a url which can be used to
+further monitor and control your sensor.  
+"""
+    sys.exit( msg )
+
+
+def locked_device(device_id):
+    msg = """
+Exception 'KeyError' was raised while configuring the device: %s,
+that probably means that your device is locked on the FriskBY
+server. Please go to the server admin panel and uncheck the 'Locked'
+checkbox for device:%s, observe that the device is automatically
+locked after each download.
+""" % (device_id , device_id)
+    sys.exit( msg )
+
+    
+def wrong_id(device_id):
+    msg = """
+Exception 'ValueError' was raised while configuring the device:
+%s, this probably means that your device ID was wrong - the server did
+not recognize device id:%s. Please make sure the device is already
+preconfigured on the server, and that you have typed the id correctly.
+""" % (device_id, device_id)
+    sys.exit( msg )
+
+
+def stop_device( ):
+    fbi = FriskbyInterface( )
+    fbi.manage("stop")
+
+
+def start_device( ):
+    fbi = FriskbyInterface( )
+    fbi.manage("start")
+    
+    
+def download_config(device_id):
+    config_url = settings.config_url( device_id )
+    print("Fetching config for device %s from: %s" % (device_id, config_url))
+
+    try:
+        config = DeviceConfig.download( config_url )
+    except KeyError:
+        locked_device( device_id )
+    except ValueError:
+        wrong_id( device_id )
+        
+    config_path = settings.DEVICE_CONFIG_PATH
+    print("Saving device configuration to:%s" % config_path )
+    config.save( filename = config_path )
+
+    
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        error_exit( )
+
+    dev_id = sys.argv[1]
+
+    stop_device( )
+    download_config( dev_id )
+    start_device( )
+

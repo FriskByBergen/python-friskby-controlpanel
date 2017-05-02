@@ -28,15 +28,16 @@ from . import ctljson
 from flask import (Flask, request, redirect, flash, url_for, render_template)  # noqa
 from .friskby_interface import FriskbyInterface
 from .forms import SettingsForm
+from .friskby_settings import DEVICE_CONFIG_PATH, config_url
+
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-    FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
-    FRISKBY_SENSOR_PATH='/sensor/api/device',
-    FRISKBY_DEVICE_CONFIG_PATH='/usr/local/friskby/etc/config.json',
+    FRISKBY_DEVICE_CONFIG_PATH=DEVICE_CONFIG_PATH,
     FRISKBY_INTERFACE=FriskbyInterface,
+    CONFIG_URL=config_url,
     WTF_CSRF_ENABLED=False
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
@@ -127,14 +128,11 @@ def register():
             error = 'No device id'
         else:
             device_id = request.form['deviceid']
-            sensor_path = app.config['FRISKBY_SENSOR_PATH']
-            root_url = app.config['FRISKBY_ROOT_URL']
-            config_url = root_url + "%s/%s/" % (sensor_path, device_id)
-            print("Fetching config for device %s from: %s" % (device_id,
-                                                              config_url))
+            url = app.config['CONFIG_URL'](device_id)
+            print("Fetching config for device %s from: %s" % (device_id, url))
             sys.stdout.flush()
             try:
-                fby_iface.download_and_save_config(config_url, config_path)
+                fby_iface.download_and_save_config(url, config_path)
                 return redirect(url_for('registered'))
             except ValueError as e:
                 error = "Failed to download configuration: %s" % e

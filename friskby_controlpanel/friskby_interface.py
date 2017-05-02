@@ -76,6 +76,12 @@ class SystemdDBus():
 # Glues DBus, python-friskby and other pertinent things together so as to
 # hide implementation details from the control panel.
 class FriskbyInterface():
+    known_units = {
+        'friskby': 'friskby.service',
+        'sampler': 'friskby-sampler.service',
+        'submitter': 'friskby-submitter.service',
+        'friskby_controlpanel': 'friskby-controlpanel.service',
+    }
 
     def __init__(self):
         self.systemd = SystemdDBus()
@@ -84,13 +90,7 @@ class FriskbyInterface():
     def _service_to_unit(self, service):
         """Returns a unit or None if the service wasn't pertinent to the
         friskby system."""
-        known_units = {
-            'friskby': 'friskby.service',
-            'sampler': 'friskby-sampler.service',
-            'submitter': 'friskby-submitter.service',
-            'friskby_controlpanel': 'friskby-controlpanel.service',
-        }
-        return known_units.get(service, None)
+        return self.known_units.get(service, None)
 
     def download_and_save_config(self, url, filename):
         """Downloads config from url and saves it to the given filename."""
@@ -211,6 +211,10 @@ class FriskbyInterface():
             self.systemd.stop_unit(unit)
         else:
             raise KeyError('%s is not an action I know of...' % action)
+
+    def manage(self, action):
+        for service in self.known_units.keys():
+            self.manage_service(service, action)
 
     def get_settings(self):
         return fby_settings.get_settings()

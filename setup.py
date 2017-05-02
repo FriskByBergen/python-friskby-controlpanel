@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='friskby-controlpanel',
-    version='0.8.2',
+    version='0.8.3',
     description='Friskby device control panel',
     long_description=long_description,
     url='https://github.com/FriskByBergen/python-friskby-controlpanel',
@@ -37,5 +37,13 @@ setup(
         'Flask-WTF',
     ],
     test_suite='tests',
-    tests_require=['pylint']
+    tests_require=['pylint'],
+    data_files=[
+        (
+            './bin',
+            [
+                'bin/fby_init'
+            ]
+        )
+    ]
 )

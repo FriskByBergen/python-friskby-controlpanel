@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="https://openlayers.org/en/v4.1.0/css/ol.css" type="text/css">
+<script src="https://openlayers.org/en/v4.1.0/build/ol.js"></script>
+{% endblock %}
+
 {% block body %}
 
 <form class="pure-form pure-form-stacked" action="{{ url_for('settings') }}" method="post">
@@ -54,10 +59,113 @@
                 {% endfor %}
                 </ul>
             {% endif %}
-
         </div>
+
+        <div id="rpi_location_container">
+            <div class="pure-control-group rpi_location-group">
+                <label for="rpi_location">Location</label>
+                <span class="pure-form-message">Select a new location for this device by clicking on the map.</span>
+                {{form.rpi_location}}
+                {% if errors.rpi_location %}
+                    <ul class="form-errors">
+                    {% for e in errors.rpi_location %}
+                        <li>{{ e }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div id="map" class="map"></div>
+            <p class="location-information"></p>
+            <p class="location-unavailable">Could not get the location of your device from Friskby. Please check your Internet connection, or create an issue on the <a href="{{ support_url }}">project home page</a>. </p>
+        </div>
+
 
         <button type="submit" class="pure-button pure-button-primary">Save</button>
     </fieldset>
 </form>
+
+<script>
+    var locInput = document.getElementById('rpi_location');
+    var locInputArr = locInput.value.split(", ");
+    var lonLat = [parseFloat(locInputArr[1], 10), parseFloat(locInputArr[0])];
+
+    if (isNaN(lonLat[0]) || isNaN(lonLat[1])) {
+        document.getElementById('rpi_location_container').classList.add('unavailable');
+
+        // We don't know what the lon/lat is, show Bergen.
+        lonLat[0] = 5.324383;
+        lonLat[1] = 60.397076;
+    } else {
+        printLocation();
+    }
+
+    var marker = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat(lonLat))
+    });
+
+    marker.setStyle(new ol.style.Style({
+        image: new ol.style.Icon(({
+            src: '/static/img/location-active.svg',
+            scale: 0.35
+        }))
+    }));
+
+
+    var vectorSource = new ol.source.Vector({
+        features: [marker]
+    });
+
+    var vectorLayer = new ol.layer.Vector({
+        source: vectorSource
+    });
+
+    var map = new ol.Map({
+        controls: ol.control.defaults({
+            attributionOptions: ({
+                collapsible: false
+            })
+        }),
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+            vectorLayer
+        ],
+        target: 'map',
+        view: new ol.View({
+            center: ol.proj.fromLonLat(lonLat),
+            zoom: 10
+        })
+    });
+
+    map.on('click', function(e) {
+        var lonLat = ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326');
+        marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(lonLat)));
+
+        var name = window.prompt('Give the location a friendly name');
+        if (name) {
+            updateLocation(lonLat[0], lonLat[1], 0, name);
+        }
+    });
+
+
+    function updateLocation(lon, lat, alt, name) {
+        var locInput = document.getElementById('rpi_location');
+        locInput.value = lat + ', ' + lon + ', ' + alt + ', ' + name;
+        printLocation();
+    }
+
+
+    function printLocation() {
+        var locInput = document.getElementById('rpi_location');
+        var locInputArr = locInput.value.split(', ');
+        var info = document.getElementsByClassName('location-information')[0];
+        info.innerHTML = '<span>Latitude</span>: ' + locInputArr[0];
+        info.innerHTML += ' · <span>Longitude</span>: ' + locInputArr[1];
+        info.innerHTML += ' · <span>Elevation</span>: ' + locInputArr[2];
+        info.innerHTML += ' · <span>Name</span>: ' + locInputArr[3];
+    }
+</script>
+
 {% endblock %}

@@ -35,6 +35,7 @@ setup(
         'flask',
         'rpiparticle>=0.9.2',
         'Flask-WTF',
+        'requests'
     ],
     test_suite='tests',
     tests_require=['pylint'],

@@ -246,3 +246,47 @@ td.recent_sample_nonuploaded {
 .settings-url {
     color: #0077E5
 }
+
+.map {
+    height: 300px;
+    width: 100%;
+    background: url(map-background.jpg) repeat;
+    margin-bottom: 10px;
+}
+
+#rpi_location {
+    display: none;
+}
+
+.location-information {
+    font-size: 9pt;
+}
+
+.location-information span {
+    font-weight: bold;
+}
+
+.unavailable {
+    position: relative;
+}
+
+.unavailable:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: " ";
+    background-color: rgba(255,255,255, 0.5);
+}
+
+.location-unavailable {
+    display: none;
+}
+
+.unavailable .location-unavailable {
+    display: block;
+    position: relative;
+    z-index: 1;
+    font-size: 9pt;
+}

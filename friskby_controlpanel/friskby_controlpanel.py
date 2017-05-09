@@ -30,15 +30,17 @@ from .friskby_interface import FriskbyInterface
 from .forms import SettingsForm
 from .friskby_settings import DEVICE_CONFIG_PATH, config_url
 
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
+    FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
+    FRISKBY_SENSOR_PATH='/sensor/api/device',
     FRISKBY_DEVICE_CONFIG_PATH=DEVICE_CONFIG_PATH,
     FRISKBY_INTERFACE=FriskbyInterface,
     CONFIG_URL=config_url,
-    WTF_CSRF_ENABLED=False
+    WTF_CSRF_ENABLED=False,
+    SUPPORT_URL='https://github.com/FriskByBergen/python-friskby-controlpanel'
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
 app.secret_key = 'we actually do not care too much'
@@ -56,11 +58,16 @@ def before_request():
 def inject_device_id():
     """Injects the device_id into the template context, or None if none."""
     filename = app.config['FRISKBY_DEVICE_CONFIG_PATH']
-    try:
-        device_id = app.config['FRISKBY_INTERFACE'].get_device_id(filename)
-    except IOError:
-        device_id = None
+    iface = app.config['FRISKBY_INTERFACE']
+    (device_id, _) = iface.get_device_id_and_api_key(filename)
     return dict(device_id=device_id)
+
+
+@app.context_processor
+def inject_meta():
+    # Injects meta stuff (about the controlpanel) into the context.
+    support_url = app.config['SUPPORT_URL']
+    return dict(support_url=support_url)
 
 
 @app.context_processor
@@ -89,10 +96,7 @@ def dashboard():
     fby_iface = app.config['FRISKBY_INTERFACE']
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
 
-    try:
-        device_id = fby_iface.get_device_id(config_path)
-    except IOError:
-        device_id = None
+    (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
 
     # No device, so redirect to the register page.
     if not device_id:
@@ -116,10 +120,7 @@ def register():
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
     error = None
 
-    try:
-        device_id = fby_iface.get_device_id(config_path)
-    except IOError:
-        device_id = None
+    (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
 
     if request.method == 'POST' and device_id:
         return redirect(url_for('dashboard'))
@@ -207,18 +208,64 @@ def status_manage(service_name, action_name):
 def settings():
     """Displays and allows changing of settings."""
     iface = app.config['FRISKBY_INTERFACE']
+    config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
+    (device_id, api_key) = iface.get_device_id_and_api_key(config_path)
+
+    # No device, so redirect to the register page.
+    if not device_id:
+        flash('Please register your device before tuning settings.')
+        return redirect(url_for('register'))
+
+    # Get location from friskby.
+    device_info_uri = "%s/%s/%s" % (app.config['FRISKBY_ROOT_URL'],
+                                    app.config['FRISKBY_SENSOR_PATH'],
+                                    device_id)
+    device_info = iface.get_device_info(device_info_uri)
+    location = None
+    try:
+        loc = device_info['location']
+        location = (loc['latitude'], loc['longitude'], 0, loc['name'])
+    except TypeError:
+        print("Failed to get location of device from friskby.")
+        sys.stdout.flush()
+
     form = None
 
     if request.method == 'GET':
-        form = SettingsForm(data=iface.get_settings())
+        data = iface.get_settings()
+        data['rpi_location'] = location
+        form = SettingsForm(data=data)
     else:
         form = SettingsForm()  # defaults to flask.request.form
         if form.validate_on_submit():
             flash('Settings saved.')
             iface.set_settings(form.data)
+
+            # Attempts to set the location only if it has changed.
+            if not _compare_locations(location,
+                                      form.rpi_location.get_location()):
+                try:
+                    field = form.rpi_location
+                    api_uri = "%s/%s/%s/" % (
+                        app.config['FRISKBY_ROOT_URL'],
+                        'sensor/api/location/create',
+                        device_id
+                    )
+                    iface.set_location(
+                        field.get_latitude(), field.get_longitude(),
+                        field.get_altitude(), field.get_name(), api_uri,
+                        api_key)
+                except RuntimeError as e:
+                    flash('Setting the location failed: %s' % e)
+
         else:
             flash('Form had errors.')
 
     return render_template(
         'settings.html', form=form, errors=form.errors
     )
+
+
+def _compare_locations(a, b):
+    # Returns true if strictly equal. Name is ignored.
+    return a[0] == b[0] and a[1] == b[1] and a[2] == b[2]

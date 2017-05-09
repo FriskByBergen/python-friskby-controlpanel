@@ -10,8 +10,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pure-buttons-min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pure-tables-min.css') }}">
 
-    <style type="text/css">
-</style>
+    {% block extra_head %}
+    {% endblock %}
 </head>
 
 <body>

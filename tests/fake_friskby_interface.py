@@ -32,6 +32,7 @@ class FakeFriskbyInterface():
     def __init__(self):
         self.fails = False
         self.device_id = None
+        self.api_key = None
 
         self.uploaded_samples_count = 0
         self.all_samples_count = 0
@@ -45,6 +46,15 @@ class FakeFriskbyInterface():
 
         self.settings = dict()
 
+        self.device_info = {
+            'location': {
+                'latitude': 60.39299,
+                'longitude': 5.32415,
+                'altitude': 0,
+                'name': 'Bergen By E Nydeli'
+            }
+        }
+
     def _check_service(self, service_name):
         services = ['sampler', 'submitter', 'friskby', 'friskby_controlpanel']
         if service_name not in services:
@@ -56,8 +66,8 @@ class FakeFriskbyInterface():
                 url, filename
             ))
 
-    def get_device_id(self, _):
-        return self.device_id
+    def get_device_id_and_api_key(self, _):
+        return (self.device_id, self.api_key)
 
     def get_service_status(self, service):
         if service == 'sampler':
@@ -107,3 +117,17 @@ class FakeFriskbyInterface():
 
     def set_settings(self, settings):
         self.settings = settings
+
+    def set_location(self, lat, lon, altitude, name, _, __):
+        if self.fails:
+            raise RuntimeError('Was asked to fail.')
+        else:
+            loc = self.device_info['location']
+            loc['latitude'] = lat
+            loc['longitude'] = lon
+            loc['altitude'] = altitude
+            loc['name'] = name
+            self.device_info['location'] = loc
+
+    def get_device_info(self, _):
+        return self.device_info

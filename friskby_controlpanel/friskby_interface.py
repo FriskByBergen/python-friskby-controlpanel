@@ -28,6 +28,7 @@ except ImportError:
 
 import socket
 import json
+import requests
 import subprocess
 import sys
 from friskby import DeviceConfig, FriskbyDao
@@ -86,6 +87,9 @@ class FriskbyInterface():
     def __init__(self):
         self.systemd = SystemdDBus()
         self.dao = FriskbyDao(fby_settings.get_setting("rpi_db"))
+
+        # Dict from e.g. http://friskby.herokuapp.com/sensor/api/device/foo
+        self._device_info = None
 
     def _service_to_unit(self, service):
         """Returns a unit or None if the service wasn't pertinent to the
@@ -163,13 +167,23 @@ class FriskbyInterface():
         lines.reverse()
         return lines
 
-    def get_device_id(self, filename):
-        """Returns the device id, or None."""
-        config = DeviceConfig(filename)
+    def get_device_id_and_api_key(self, config_file):
+        # Returns a tuple consisting of device ID and API key.
+        config = None
+
+        try:
+            config = DeviceConfig(config_file)
+        except IOError:
+            return (None, None)
+
         device_id = config.getDeviceID()
+        post_key = config.getPostKey()
         if device_id == "" or device_id is None:
-            return None
-        return device_id
+            device_id = None
+        if post_key == "" or post_key is None:
+            post_key = None
+
+        return (device_id, post_key)
 
     def get_uploaded_samples_count(self):
         fetch_uploaded = True
@@ -228,3 +242,36 @@ class FriskbyInterface():
                                  settings['rpi_control_panel_port'])
         fby_settings.set_setting('rpi_sds011',
                                  settings['rpi_sds011'])
+
+    def set_location(self, lat, lon, altitude, name, uri, api_key):
+        r = None
+        try:
+            r = requests.get(uri, params={
+                'key': api_key,
+                'latitude': lat,
+                'longitude': lon,
+                'altitude': altitude,
+                'name': name
+            })
+        except requests.exceptions.ConnectionError as e:
+            raise RuntimeError('Failed to set location: %s' % e)
+
+        if r is not None and r.status_code != 200:
+            print('Failed to set location: %s:' % r.text)
+            sys.stdout.flush()
+            raise RuntimeError(
+                'Failed to set location, friskby responded with %d.'
+                % r.status_code
+            )
+
+    def get_device_info(self, uri):
+        r = None
+        try:
+            r = requests.get(uri)
+        except requests.exceptions.ConnectionError:
+            return None
+
+        if r.status_code != 200:
+            return None
+
+        return r.json()
